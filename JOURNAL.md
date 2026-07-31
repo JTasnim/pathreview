@@ -42,3 +42,58 @@ named in the issue (`test_partial_support_returns_middle_score`, `test_multiple_
 **Blockers or open questions:**
 Still deciding the exact scaling rule for the overlap threshold (e.g. ratio vs. fixed floor) —
 will validate against the full existing test suite before finalizing in Week 9.
+
+
+## Week 9 — Solution building & PR submission
+
+### Check-in 1 (mid-week)
+
+**Current progress:**
+Implemented the fix in `_is_supported()` — the required token overlap now scales
+with the claim's own meaningful token count (floor of 1) instead of using a fixed
+threshold of 2. While testing against the three named tests, found two related
+issues that also needed fixing to get all three passing: punctuation attached to
+tokens (e.g. "Python,") blocked otherwise-identical matches, and `_extract_claims()`
+treated compound sentences joined by "and" as one all-or-nothing claim instead of
+independently-scored claims. Fixed both alongside the main threshold change.
+
+Added `test_single_meaningful_token_claim_is_supported`, covering the exact
+single-token case from the issue. Ran the full test file before and after:
+baseline was `4 failed, 18 passed`; after the fix, `22 passed, 1 failed`
+(`test_none_context_chunk_text` — confirmed pre-existing, belongs to issue #153,
+unrelated code path in `check()`, not `_is_supported()`).
+
+Ran `make check` across the full codebase and confirmed via `git stash` comparison
+that this change introduces no new lint errors — only two pre-existing findings in
+the touched files (import order in `faithfulness_checker.py`, an unused variable
+in a test that already didn't assert a value).
+
+**Next steps:**
+Finalize the PR description (root cause explanation, before/after reproduction
+steps, Notes for Reviewers covering both the #153 and lint findings). Run the
+full pre-submission checklist, open a draft PR, and share it in the cohort
+Slack channel for peer/mentor feedback before marking it ready for review.
+
+**Blockers:**
+None currently. Still deciding whether to mention the `test_minimum_overlap_required`
+comment discrepancy (documents the old fixed-threshold rule) directly in the PR
+description or leave it as a passing observation — will resolve before opening
+the PR.
+
+---
+
+### Check-in 2 (end of week)
+
+**PR link:** [link to your submitted pull request]
+
+**Branch:** [the branch name you worked on, e.g. `fix/123-short-description`]
+
+**What you built:**
+[1–3 sentences summarizing what your fix does and how it works]
+
+**Tests added or updated:**
+[Which test files did you touch? What do they cover?]
+
+**Self-review confirmation:** [ ] make check passes  [ ] make test-unit passes
+
+**Draft PR feedback received from:** [name or Slack handle, or "none"]
