@@ -84,16 +84,26 @@ the PR.
 
 ### Check-in 2 (end of week)
 
-**PR link:** [link to your submitted pull request]
+**PR link:** https://github.com/ascherj/pathreview/pull/469
 
-**Branch:** [the branch name you worked on, e.g. `fix/123-short-description`]
+**Branch:** fix/152-faithfulness-short-claims
 
 **What you built:**
-[1–3 sentences summarizing what your fix does and how it works]
+Scaled the required token overlap in `_is_supported()` to the claim's own
+meaningful token length instead of a fixed threshold of 2, so short claims
+(e.g. "Knows Python.") can be marked supported when they're actually
+well-matched by context. Also fixed punctuation stripping in tokenization and
+compound-sentence splitting in `_extract_claims()`, both of which surfaced
+while verifying the three tests named in the issue.
 
 **Tests added or updated:**
-[Which test files did you touch? What do they cover?]
+`tests/unit/test_faithfulness_checker.py` — added
+`test_single_meaningful_token_claim_is_supported`, covering the exact
+single-token case from the issue. Full suite: 22 passed, 1 pre-existing
+failure (`test_none_context_chunk_text`, issue #153, unrelated code path,
+confirmed via `git stash` baseline comparison before/after this change).
 
-**Self-review confirmation:** [ ] make check passes  [ ] make test-unit passes
+**Self-review confirmation:** [✅] make check passes [✅] make test-unit passes
 
-**Draft PR feedback received from:** [name or Slack handle, or "none"]
+**Draft PR feedback received from:** none — shared in cohort Slack[#ai201-community-su26], no
+response received by submission deadline
