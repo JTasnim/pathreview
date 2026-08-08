@@ -80,8 +80,6 @@ comment discrepancy (documents the old fixed-threshold rule) directly in the PR
 description or leave it as a passing observation — will resolve before opening
 the PR.
 
----
-
 ### Check-in 2 (end of week)
 
 **PR link:** https://github.com/ascherj/pathreview/pull/469
@@ -107,3 +105,74 @@ confirmed via `git stash` baseline comparison before/after this change).
 
 **Draft PR feedback received from:** none — shared in cohort Slack[#ai201-community-su26], no
 response received by submission deadline
+
+
+## Week 10 — Iteration & reflection
+
+### Reviewer feedback
+
+**Feedback received:** [ ] Yes [x] No — still awaiting review
+
+**Summary of feedback:**
+No review came in. Shared the draft PR in the cohort Slack channel in Week 9 for peer
+feedback as well; no response received by the Week 10 deadline.
+
+**How you responded:**
+N/A — no feedback received to respond to.
+
+---
+
+### Reflection
+
+**What was harder than you expected?**
+Getting all three tests named in the issue to actually pass. My first fix — scaling
+the overlap threshold to claim length — looked correct and got 2 of 3 target tests
+passing immediately. I assumed the third just needed a different ratio and spent
+time tuning the formula before realizing the test couldn't pass under *any*
+threshold value: it required a single claim to score a *partial* result, which is
+mathematically impossible when one sentence produces exactly one claim. The real
+fix required splitting compound sentences in `_extract_claims()`, a function the
+issue never named. I was debugging the wrong hypothesis for longer than I'd like
+to admit before I actually computed the numbers by hand for each failing case
+instead of guessing at threshold values.
+
+**What did you learn about working in a large codebase?**
+That a bug's stated scope and its actual scope aren't always the same thing. The
+issue named one function (`_is_supported()`), but the tests it referenced revealed
+that a proper fix touched two functions and needed a documented judgment call
+about scope (which I included explicitly in my PR's Notes for Reviewers, rather
+than quietly expanding the diff). I also learned to distrust my own confidence —
+running `make check` and the full test suite before *and* after a change, and
+diffing the two, caught things that just reading my own code wouldn't have. And
+practically: rebasing onto upstream late in the process, keeping local
+environment fixes (a numpy pin for Docker) permanently unstaged so they never
+leak into commits, and splitting docs commits from code commits all mattered more
+than I expected going in.
+
+**How did AI tools help — and where did they fall short?**
+AI was most useful for fast iteration — tracing a function line by line, computing
+token overlaps for specific test cases to test a hypothesis quickly, and drafting
+PR descriptions and commit messages against the project's actual conventions
+once I gave it the real CONTRIBUTING.md. Where it fell short: it couldn't replace
+actually running the code. My first "fix" looked reasonable on paper, but only
+running it against the full test suite revealed it was wrong for a subtle
+mathematical reason (a single-claim sentence can't produce a partial score). AI
+could help me reason about *why* once I had the real numbers in front of me, but
+generating and running the actual evidence was still on me.
+
+**What would you do differently if you started over?**
+Run the full test suite immediately after my *first* attempted fix, rather than
+checking only the three named tests first. If I'd seen the full picture (22 tests,
+not 3) from the start, I likely would have caught the compound-claim problem in
+one pass instead of two. I'd also write the punctuation-tokenization edge case
+into my plan earlier — I found it almost by accident while tracing the function
+manually, and it turned out to be load-bearing for one of the three tests, not
+just a nice-to-have observation.
+
+**What are you most proud of from this module?**
+Not shipping my first fix. It passed 2 of 3 tests and would have been easy to
+declare "close enough," but I kept testing until I understood *why* the third
+one failed, rather than adjusting numbers until it happened to pass. That
+distinction — between a fix that passes tests by coincidence and one you can
+actually explain — feels like the most transferable thing I took from this
+module.
